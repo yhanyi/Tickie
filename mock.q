@@ -5,14 +5,14 @@
 maxChunkSize:50;
 n:1000;
 
-.feed.trade:(n?.feed.times;n?.feed.valid;n?n;n?`float$n);
-.feed.quote:(n?.feed.times;n?.feed.valid;n?`float$n;n?`float$n;n?n;n?n);
+.feed.mocktrade:(n?.feed.times;n?.feed.valid;n?n;n?`float$n);
+.feed.mockquote:(n?.feed.times;n?.feed.valid;n?`float$n;n?`float$n;n?n;n?n);
 
 .z.ts:{
   if[null .feed.tph;
     .feed.tph:@[hopen;.feed.TP_PORT;0Ni]];
   if[not null .feed.tph;
-    t:rand`trade`quote;
+    t:rand`mocktrade`mockquote;
     neg[.feed.tph](`.u.upd;t;flip(1+rand maxChunkSize)?flip .feed t)];
   }
 

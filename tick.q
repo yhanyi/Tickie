@@ -31,10 +31,6 @@ tick:{
   if[l::count y;
     L::`$":",y,"/",x,"/",string d;
     show L;
-    / logdir:y,"/",string x;
-    / If dir does not exist, key returns empty so create it.
-    / @[system;"mkdir -p ",logdir;{}];
-    / L::`$":",logdir;
     l::ld d]
   };
 
