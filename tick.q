@@ -1,13 +1,42 @@
-
-/Usage: q tick.q [SRC] [DST] [-p 5010] [-o h]
-system"l tick/",(src:first .z.x,enlist"sym"),".q"
+/ Load schema from root directory.
+system"l ",(src:first .z.x,enlist"sym"),".q"
 
 if[not system"p";system"p 5010"]
 
+/ Load utils from root directory.
 \l utils.q
+
 \d .u
-ld:{if[not type key L::`$(-10_string L),string x;.[L;();:;()]];i::j::-11!(-2;L);if[0<=type i;-2 (string L)," is a corrupt log. Truncate to length ",(string last i)," and restart";exit 1];hopen L};
-tick:{init[];if[not min(`time`sym~2#key flip value@)each t;'`timesym];@[;`sym;`g#]each t;d::.z.D;if[l::count y;L::`$":",y,"/",x,10#".";l::ld d]};
+
+/ Opens/creates log file.
+ld:{
+  logpath:(-10_string L),string x;
+  / Create only parent directory "sym/", remove leading : and date filename.
+  dirpath:1_(-10_logpath);
+  @[system;"mkdir -p \"",dirpath,"\"";{}];
+  if[not type key L::`$logpath;.[L;();:;()]];
+  i::j::-11!(-2;L);
+  if[0<=type i;
+    -2 (string L)," is a corrupt log. Truncate to length ",(string last i)," and restart";
+    exit 1];
+  hopen L
+  };
+
+/ Initialise tickerplant.
+tick:{
+  init[];
+  if[not min(`time`sym~2#key flip value@)each t;'`timesym];
+  @[;`sym;`g#]each t;
+  d::.z.D;
+  if[l::count y;
+    L::`$":",y,"/",x,"/",string d;
+    show L;
+    / logdir:y,"/",string x;
+    / If dir does not exist, key returns empty so create it.
+    / @[system;"mkdir -p ",logdir;{}];
+    / L::`$":",logdir;
+    l::ld d]
+  };
 
 endofday:{end d;d+:1;if[l;hclose l;l::0(`.u.ld;d)]};
 ts:{if[d<x;if[d<x-1;system"t 0";'"more than one day?"];endofday[]]};
@@ -33,16 +62,6 @@ if[not system"t";system"t 1000";
  .u.i - msg count in log file
  .u.j - total msg count (log file plus those held in buffer)
  .u.t - table names
- .u.L - tp log filename, e.g. `:./sym2008.09.11
+ .u.L - tp log filename
  .u.l - handle to tp log file
  .u.d - date
-
-/test
->q tick.q
->q tick/ssl.q
-
-/run
->q tick.q sym . -p 5010	/tick
->q rdb.q :5010  -p 5011	/rdb
->q sym          -p 5012	/hdb
->q tick/ssl.q sym :5010	/feed
