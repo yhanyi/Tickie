@@ -1,5 +1,7 @@
 # Tickie
 
+Note: WIP, making breaking changes.
+
 Tiny and compact kdb+/q ticker plant with a mock feed for learning purposes.
 
 ## Files
@@ -8,7 +10,8 @@ Tiny and compact kdb+/q ticker plant with a mock feed for learning purposes.
 - `rdb.q`   - rdb
 - `sym.q`   - schema
 - `utils.q` - math utils
-- `feed.q`  - automated mock feed
+- `mock.q`  - automated mock feed
+- `feed.q`  - Binance feed
 
 ## Usage
 
@@ -17,7 +20,7 @@ We need three terminal instances: tickerplant, rdb, feed.
 ```bash
 q tick.q sym . -p 5010  # Terminal 1: tickerplant.
 q rdb.q :5010 -p 5011   # Terminal 2: rdb.
-q feed.q                # Terminal 3: mock feed. 
+q mock.q                # Terminal 3: mock feed.
 ```
 
 Try running commands in terminal 2 (rdb) to interface with the kdb+ database. Hopefully it works lol.
